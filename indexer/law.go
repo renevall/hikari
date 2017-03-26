@@ -106,8 +106,21 @@ func (li *LawIndex) Add(law domain.Law) error {
 }
 
 //Search executes a query to the index
-func (li *LawIndex) Search(query string) {
-	fmt.Println("The query was:", query)
+func (li *LawIndex) Search(queryString string, index bleve.Index) error {
+	fmt.Println("Query string is:", queryString)
+	// index, err := bleve.Open("testlaws.bleve")
+	// if err != nil {
+	// 	return err
+	// }
+	query := bleve.NewMatchQuery(queryString)
+	search := bleve.NewSearchRequest(query)
+	searchResults, err := index.Search(search)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Println(searchResults)
+	return nil
 }
 
 //Delete removes a record from the index
