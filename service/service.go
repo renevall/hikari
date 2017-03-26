@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bitbucket.org/reneval/hikari/indexer"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,8 +12,9 @@ type HikariService struct {
 func (s *HikariService) Run() {
 
 	r := gin.Default()
+	lawIndexer := indexer.LawIndex{}
 
-	lawRouting := LawRouting{}
+	lawRouting := LawRouting{&lawIndexer}
 
 	// to start out, we'll build the ability to add, get, and delete a todo
 	r.POST("/law", lawRouting.IndexLaw)
@@ -20,5 +22,5 @@ func (s *HikariService) Run() {
 	r.DELETE("/todo/:id", lawRouting.IndexLaw)
 
 	// we'll pass in configuration later
-	r.Run(":8080")
+	r.Run(":8888")
 }
