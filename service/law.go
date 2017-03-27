@@ -3,6 +3,8 @@ package service
 import (
 	"net/http"
 
+	"fmt"
+
 	"bitbucket.org/reneval/hikari/domain"
 	"github.com/blevesearch/bleve"
 	"github.com/gin-gonic/gin"
@@ -32,7 +34,8 @@ func (law *LawRouting) IndexLaw(c *gin.Context) {
 	//Start index prodecure
 	err := law.Indexer.Add(newLaw)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": "fail", "message": "Could not Index Law"})
+		fmt.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": "Could not Index Law"})
 		return
 	}
 	c.JSON(200, gin.H{"code": 200})

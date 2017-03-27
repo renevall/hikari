@@ -1,6 +1,9 @@
 package main
 
-import "bitbucket.org/reneval/hikari/service"
+import (
+	"bitbucket.org/reneval/hikari/service"
+	_ "github.com/blevesearch/blevex/lang/es"
+)
 
 //TODO: makes this file a cli
 

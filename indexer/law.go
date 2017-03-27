@@ -13,8 +13,15 @@ type LawIndex struct{}
 
 //Add adds a Law to the index
 func (li *LawIndex) Add(law domain.Law) error {
-	fmt.Println("Add Reached")
+	esFieldMapping := bleve.NewTextFieldMapping()
+	esFieldMapping.Analyzer = "es"
+
+	eventMapping := bleve.NewDocumentMapping()
+	eventMapping.AddFieldMappingsAt("Name", esFieldMapping)
+	eventMapping.AddFieldMappingsAt("Content", esFieldMapping)
+
 	mapping := bleve.NewIndexMapping()
+	mapping.DefaultMapping = eventMapping
 	index, err := bleve.New("testlaws.bleve", mapping)
 	if err != nil {
 		return err
@@ -108,12 +115,11 @@ func (li *LawIndex) Add(law domain.Law) error {
 //Search executes a query to the index
 func (li *LawIndex) Search(queryString string, index bleve.Index) error {
 	fmt.Println("Query string is:", queryString)
-	// index, err := bleve.Open("testlaws.bleve")
-	// if err != nil {
-	// 	return err
-	// }
+
+	// query := bleve.NewPhraseQuery(strings.Split(queryString, " "), "Content")
 	query := bleve.NewMatchQuery(queryString)
 	search := bleve.NewSearchRequest(query)
+	search.Highlight = bleve.NewHighlightWithStyle("html")
 	searchResults, err := index.Search(search)
 	if err != nil {
 		fmt.Println(err)
