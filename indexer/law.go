@@ -12,20 +12,8 @@ import (
 type LawIndex struct{}
 
 //Add adds a Law to the index
-func (li *LawIndex) Add(law domain.Law) error {
-	esFieldMapping := bleve.NewTextFieldMapping()
-	esFieldMapping.Analyzer = "es"
+func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
 
-	eventMapping := bleve.NewDocumentMapping()
-	eventMapping.AddFieldMappingsAt("Name", esFieldMapping)
-	eventMapping.AddFieldMappingsAt("Content", esFieldMapping)
-
-	mapping := bleve.NewIndexMapping()
-	mapping.DefaultMapping = eventMapping
-	index, err := bleve.New("testlaws.bleve", mapping)
-	if err != nil {
-		return err
-	}
 	// Adding Relevant Info to Index
 
 	if len(law.Books) > 0 {
@@ -86,6 +74,7 @@ func (li *LawIndex) Add(law domain.Law) error {
 					if len(chapter.Articles) > 0 {
 
 						for _, article := range chapter.Articles {
+							fmt.Println("Indexing: ", article.Name)
 							err := index.Index("article."+strconv.Itoa(article.ID),
 								prepareItem(int64(article.ID), article.Name, article.Name, "article", law.ID, law.Name))
 							// _, err := fillArticle(&article, lawID, chapterID, l.DB, tx)

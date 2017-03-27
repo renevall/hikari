@@ -18,7 +18,7 @@ type LawRouting struct {
 
 //Indexer defines an interface for the Indexing processes
 type Indexer interface {
-	Add(domain.Law) error
+	Add(domain.Law, bleve.Index) error
 	Search(string, bleve.Index) error
 	Delete()
 }
@@ -32,7 +32,7 @@ func (law *LawRouting) IndexLaw(c *gin.Context) {
 	var newLaw domain.Law
 	c.BindJSON(&newLaw)
 	//Start index prodecure
-	err := law.Indexer.Add(newLaw)
+	err := law.Indexer.Add(newLaw, law.LawIndexBleve)
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "fail", "message": "Could not Index Law"})

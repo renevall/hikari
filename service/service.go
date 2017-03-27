@@ -1,6 +1,8 @@
 package service
 
 import (
+	"log"
+
 	"bitbucket.org/reneval/hikari/indexer"
 	"github.com/blevesearch/bleve"
 	"github.com/gin-gonic/gin"
@@ -14,7 +16,15 @@ func (s *HikariService) Run() {
 
 	r := gin.Default()
 	lawIndexer := indexer.LawIndex{}
-	lawIndex, _ := bleve.Open("testlaws.bleve")
+	lawIndex, err := bleve.Open("testlaws.bleve")
+	if err == bleve.ErrorIndexPathDoesNotExist {
+		log.Printf("Creating new index...")
+		indexMapping, err := indexer.BuildIndexMapping()
+		if err != nil {
+			log.Fatal(err)
+		}
+		lawIndex, err = bleve.New("testlaws.bleve", indexMapping)
+	}
 
 	lawRouting := LawRouting{&lawIndexer, lawIndex}
 
