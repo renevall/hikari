@@ -5,7 +5,7 @@ import (
 
 	"bitbucket.org/reneval/hikari/indexer"
 	"github.com/blevesearch/bleve"
-	"github.com/gin-gonic/gin"
+	"gopkg.in/gin-gonic/gin.v1"
 )
 
 type HikariService struct {
