@@ -34,5 +34,5 @@ func (s *HikariService) Run() {
 	r.DELETE("/todo/:id", lawRouting.IndexLaw)
 
 	// we'll pass in configuration later
-	r.Run(":8888")
+	r.Run(":8585")
 }

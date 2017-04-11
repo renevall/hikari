@@ -19,7 +19,7 @@ type LawRouting struct {
 //Indexer defines an interface for the Indexing processes
 type Indexer interface {
 	Add(domain.Law, bleve.Index) error
-	Search(string, bleve.Index) error
+	Search(string, bleve.Index) (*bleve.SearchResult, error)
 	Delete()
 }
 
@@ -49,12 +49,14 @@ func (law *LawRouting) SearchLaw(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": "Not the expected params"})
 		return
 	}
-	err := law.Indexer.Search(query, law.LawIndexBleve)
+	results, err := law.Indexer.Search(query, law.LawIndexBleve)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "error",
 			"message": "Search service unavalible"})
 		return
 	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "success", "data": results.Hits})
 
 }
 
