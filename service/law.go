@@ -7,7 +7,7 @@ import (
 
 	"bitbucket.org/reneval/hikari/domain"
 	"github.com/blevesearch/bleve"
-	"gopkg.in/gin-gonic/gin.v1"
+	"github.com/gin-gonic/gin"
 )
 
 //LawRouting contains the necessary routes to comunicate via HTTP

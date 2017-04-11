@@ -2,10 +2,12 @@ package service
 
 import (
 	"log"
+	"time"
 
 	"bitbucket.org/reneval/hikari/indexer"
 	"github.com/blevesearch/bleve"
-	"gopkg.in/gin-gonic/gin.v1"
+	"github.com/gin-gonic/gin"
+	cors "gopkg.in/gin-contrib/cors.v1"
 )
 
 type HikariService struct {
@@ -15,6 +17,27 @@ type HikariService struct {
 func (s *HikariService) Run() {
 
 	r := gin.Default()
+	// r.Use(cors.Middleware(cors.Config{
+	// 	Origins:         "*",
+	// 	Methods:         "GET, PUT, POST, DELETE",
+	// 	RequestHeaders:  "Origin, Authorization, Content-Type",
+	// 	ExposedHeaders:  "",
+	// 	MaxAge:          50 * time.Second,
+	// 	Credentials:     true,
+	// 	ValidateHeaders: false,
+	// }))
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:4200"},
+		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "https://github.com"
+		},
+		MaxAge: 12 * time.Hour,
+	}))
+
 	lawIndexer := indexer.LawIndex{}
 	lawIndex, err := bleve.Open("testlaws.bleve")
 	if err == bleve.ErrorIndexPathDoesNotExist {
