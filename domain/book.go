@@ -8,3 +8,8 @@ type Book struct {
 	Titles   []Title `json:"titles"`
 	Reviewed bool    `json:"reviewed"`
 }
+
+//Type returns the type of bleve document mapping
+func (b *Book) Type() string {
+	return "book"
+}

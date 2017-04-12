@@ -17,3 +17,8 @@ type Law struct {
 	Articles     []Article `json:"articles"`
 	Init         string    `json:"init"`
 }
+
+//Type returns the type of bleve document mapping
+func (l *Law) Type() string {
+	return "law"
+}

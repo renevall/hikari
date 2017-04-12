@@ -18,24 +18,24 @@ func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
 
 	if len(law.Books) > 0 {
 		for _, book := range law.Books {
-			err := index.Index("book."+strconv.FormatInt(book.ID, 10),
-				prepareItem(book.ID, book.Name, book.Name, "book", law.ID, law.Name))
+			err := index.Index("book."+strconv.FormatInt(book.ID, 10), book)
+			// prepareItem(book.ID, book.Name, book.Name, "book", law.ID, law.Name))
 			// bookID, err := fillBooks(&book, lawID, l.DB)
 			if err != nil {
 				return err
 			}
 			if len(book.Titles) > 0 {
 				for _, title := range book.Titles {
-					err := index.Index("title."+strconv.FormatInt(title.ID, 10),
-						prepareItem(title.ID, title.Name, title.Name, "title", law.ID, law.Name))
+					err := index.Index("title."+strconv.FormatInt(title.ID, 10), title)
+					// prepareItem(title.ID, title.Name, title.Name, "title", law.ID, law.Name))
 					// titleID, err := fillTitles(&title, lawID, bookID, l.DB)
 					if err != nil {
 						return err
 					}
 					if len(title.Chapters) > 0 {
 						for _, chapter := range title.Chapters {
-							err := index.Index("chapter."+strconv.FormatInt(chapter.ID, 10),
-								prepareItem(chapter.ID, chapter.Name, chapter.Name, "chapter", law.ID, law.Name))
+							err := index.Index("chapter."+strconv.FormatInt(chapter.ID, 10), chapter)
+							// prepareItem(chapter.ID, chapter.Name, chapter.Name, "chapter", law.ID, law.Name))
 							// chapterID, err := fillChapter(&chapter, lawID, titleID, l.DB)
 							if err != nil {
 								return err
@@ -44,8 +44,8 @@ func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
 
 								for _, article := range chapter.Articles {
 									// _, err := fillArticle(&article, lawID, chapterID, l.DB, tx)
-									err := index.Index("article."+strconv.Itoa(article.ID),
-										prepareItem(int64(article.ID), article.Name, article.Name, "article", law.ID, law.Name))
+									err := index.Index("article."+strconv.Itoa(article.ID), article)
+									// prepareItem(int64(article.ID), article.Name, article.Text, "article", law.ID, law.Name))
 									if err != nil {
 										return nil
 									}
@@ -58,15 +58,15 @@ func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
 		}
 	} else if len(law.Titles) > 0 {
 		for _, title := range law.Titles {
-			err := index.Index("title."+strconv.FormatInt(title.ID, 10),
-				prepareItem(title.ID, title.Name, title.Name, "title", law.ID, law.Name))
+			err := index.Index("title."+strconv.FormatInt(title.ID, 10), title)
+			// prepareItem(title.ID, title.Name, title.Name, "title", law.ID, law.Name))
 			if err != nil {
 				return err
 			}
 			if len(title.Chapters) > 0 {
 				for _, chapter := range title.Chapters {
-					err := index.Index("chapter."+strconv.FormatInt(chapter.ID, 10),
-						prepareItem(chapter.ID, chapter.Name, chapter.Name, "chapter", law.ID, law.Name))
+					err := index.Index("chapter."+strconv.FormatInt(chapter.ID, 10), chapter)
+					// prepareItem(chapter.ID, chapter.Name, chapter.Name, "chapter", law.ID, law.Name))
 					// chapterID, err := fillChapter(&chapter, lawID, titleID, l.DB)
 					if err != nil {
 						return err
@@ -75,8 +75,8 @@ func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
 
 						for _, article := range chapter.Articles {
 							fmt.Println("Indexing: ", article.Name)
-							err := index.Index("article."+strconv.Itoa(article.ID),
-								prepareItem(int64(article.ID), article.Name, article.Name, "article", law.ID, law.Name))
+							err := index.Index("article."+strconv.Itoa(article.ID), article)
+							// prepareItem(int64(article.ID), article.Name, article.Name, "article", law.ID, law.Name))
 							// _, err := fillArticle(&article, lawID, chapterID, l.DB, tx)
 							if err != nil {
 								return nil
@@ -90,8 +90,8 @@ func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
 
 		for _, article := range law.Articles {
 			// _, err := fillArticle(&article, lawID, 0, l.DB, tx)
-			err := index.Index("article."+strconv.Itoa(article.ID),
-				prepareItem(int64(article.ID), article.Name, article.Name, "article", law.ID, law.Name))
+			err := index.Index("article."+strconv.Itoa(article.ID), article)
+			// prepareItem(int64(article.ID), article.Name, article.Name, "article", law.ID, law.Name))
 			if err != nil {
 				return nil
 			}

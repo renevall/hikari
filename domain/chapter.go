@@ -9,3 +9,8 @@ type Chapter struct {
 	LawID    int64     `json:"lawID" db:"law_id"`
 	Reviewed bool      `json:"reviewed"`
 }
+
+//Type returns the type of bleve document mapping
+func (c *Chapter) Type() string {
+	return "article"
+}

@@ -9,3 +9,8 @@ type Title struct {
 	BookID   int64     `json:"bookID" db:"book_id"`
 	Reviewed bool      `json:"reviewed"`
 }
+
+//Type returns the type of bleve document mapping
+func (t *Title) Type() string {
+	return "title"
+}
