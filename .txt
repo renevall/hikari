@@ -1,0 +1,214 @@
+commit 3bc50516b464a1f471c7fc9a6136cc6050e6c71f
+tree cc98bb62e72fd81a87aafbc87f220303647ce7b3
+parent 7d22c9e245c22ad632ca10c11dae150696b3d38d
+author Rene Vallecillo <reneval@gmail.com> 1491965240 -0600
+committer Rene Vallecillo <reneval@gmail.com> 1491965240 -0600
+
+    specifying document typings
+
+diff --git a/domain/article.go b/domain/article.go
+index c92b42d..7acb502 100644
+--- a/domain/article.go
++++ b/domain/article.go
+@@ -9,3 +9,8 @@ type Article struct {
+ 	LawID     int64  `json:"lawID" db:"law_id"`
+ 	Reviewed  bool   `json:"reviewed"`
+ }
++
++//Type returns the type of bleve document mapping
++func (a *Article) Type() string {
++	return "article"
++}
+diff --git a/domain/book.go b/domain/book.go
+index b6baca5..afe08fa 100644
+--- a/domain/book.go
++++ b/domain/book.go
+@@ -8,3 +8,8 @@ type Book struct {
+ 	Titles   []Title `json:"titles"`
+ 	Reviewed bool    `json:"reviewed"`
+ }
++
++//Type returns the type of bleve document mapping
++func (b *Book) Type() string {
++	return "book"
++}
+diff --git a/domain/chapter.go b/domain/chapter.go
+index f55c8a6..215356c 100644
+--- a/domain/chapter.go
++++ b/domain/chapter.go
+@@ -9,3 +9,8 @@ type Chapter struct {
+ 	LawID    int64     `json:"lawID" db:"law_id"`
+ 	Reviewed bool      `json:"reviewed"`
+ }
++
++//Type returns the type of bleve document mapping
++func (c *Chapter) Type() string {
++	return "article"
++}
+diff --git a/domain/law.go b/domain/law.go
+index 52702a4..4bc7d26 100644
+--- a/domain/law.go
++++ b/domain/law.go
+@@ -17,3 +17,8 @@ type Law struct {
+ 	Articles     []Article `json:"articles"`
+ 	Init         string    `json:"init"`
+ }
++
++//Type returns the type of bleve document mapping
++func (l *Law) Type() string {
++	return "law"
++}
+diff --git a/domain/title.go b/domain/title.go
+index 2dc16be..ea627ec 100644
+--- a/domain/title.go
++++ b/domain/title.go
+@@ -9,3 +9,8 @@ type Title struct {
+ 	BookID   int64     `json:"bookID" db:"book_id"`
+ 	Reviewed bool      `json:"reviewed"`
+ }
++
++//Type returns the type of bleve document mapping
++func (t *Title) Type() string {
++	return "title"
++}
+diff --git a/indexer/law.go b/indexer/law.go
+index 646ea86..0e38da9 100644
+--- a/indexer/law.go
++++ b/indexer/law.go
+@@ -18,24 +18,24 @@ func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
+ 
+ 	if len(law.Books) > 0 {
+ 		for _, book := range law.Books {
+-			err := index.Index("book."+strconv.FormatInt(book.ID, 10),
+-				prepareItem(book.ID, book.Name, book.Name, "book", law.ID, law.Name))
++			err := index.Index("book."+strconv.FormatInt(book.ID, 10), book)
++			// prepareItem(book.ID, book.Name, book.Name, "book", law.ID, law.Name))
+ 			// bookID, err := fillBooks(&book, lawID, l.DB)
+ 			if err != nil {
+ 				return err
+ 			}
+ 			if len(book.Titles) > 0 {
+ 				for _, title := range book.Titles {
+-					err := index.Index("title."+strconv.FormatInt(title.ID, 10),
+-						prepareItem(title.ID, title.Name, title.Name, "title", law.ID, law.Name))
++					err := index.Index("title."+strconv.FormatInt(title.ID, 10), title)
++					// prepareItem(title.ID, title.Name, title.Name, "title", law.ID, law.Name))
+ 					// titleID, err := fillTitles(&title, lawID, bookID, l.DB)
+ 					if err != nil {
+ 						return err
+ 					}
+ 					if len(title.Chapters) > 0 {
+ 						for _, chapter := range title.Chapters {
+-							err := index.Index("chapter."+strconv.FormatInt(chapter.ID, 10),
+-								prepareItem(chapter.ID, chapter.Name, chapter.Name, "chapter", law.ID, law.Name))
++							err := index.Index("chapter."+strconv.FormatInt(chapter.ID, 10), chapter)
++							// prepareItem(chapter.ID, chapter.Name, chapter.Name, "chapter", law.ID, law.Name))
+ 							// chapterID, err := fillChapter(&chapter, lawID, titleID, l.DB)
+ 							if err != nil {
+ 								return err
+@@ -44,8 +44,8 @@ func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
+ 
+ 								for _, article := range chapter.Articles {
+ 									// _, err := fillArticle(&article, lawID, chapterID, l.DB, tx)
+-									err := index.Index("article."+strconv.Itoa(article.ID),
+-										prepareItem(int64(article.ID), article.Name, article.Name, "article", law.ID, law.Name))
++									err := index.Index("article."+strconv.Itoa(article.ID), article)
++									// prepareItem(int64(article.ID), article.Name, article.Text, "article", law.ID, law.Name))
+ 									if err != nil {
+ 										return nil
+ 									}
+@@ -58,15 +58,15 @@ func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
+ 		}
+ 	} else if len(law.Titles) > 0 {
+ 		for _, title := range law.Titles {
+-			err := index.Index("title."+strconv.FormatInt(title.ID, 10),
+-				prepareItem(title.ID, title.Name, title.Name, "title", law.ID, law.Name))
++			err := index.Index("title."+strconv.FormatInt(title.ID, 10), title)
++			// prepareItem(title.ID, title.Name, title.Name, "title", law.ID, law.Name))
+ 			if err != nil {
+ 				return err
+ 			}
+ 			if len(title.Chapters) > 0 {
+ 				for _, chapter := range title.Chapters {
+-					err := index.Index("chapter."+strconv.FormatInt(chapter.ID, 10),
+-						prepareItem(chapter.ID, chapter.Name, chapter.Name, "chapter", law.ID, law.Name))
++					err := index.Index("chapter."+strconv.FormatInt(chapter.ID, 10), chapter)
++					// prepareItem(chapter.ID, chapter.Name, chapter.Name, "chapter", law.ID, law.Name))
+ 					// chapterID, err := fillChapter(&chapter, lawID, titleID, l.DB)
+ 					if err != nil {
+ 						return err
+@@ -75,8 +75,8 @@ func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
+ 
+ 						for _, article := range chapter.Articles {
+ 							fmt.Println("Indexing: ", article.Name)
+-							err := index.Index("article."+strconv.Itoa(article.ID),
+-								prepareItem(int64(article.ID), article.Name, article.Name, "article", law.ID, law.Name))
++							err := index.Index("article."+strconv.Itoa(article.ID), article)
++							// prepareItem(int64(article.ID), article.Name, article.Name, "article", law.ID, law.Name))
+ 							// _, err := fillArticle(&article, lawID, chapterID, l.DB, tx)
+ 							if err != nil {
+ 								return nil
+@@ -90,8 +90,8 @@ func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
+ 
+ 		for _, article := range law.Articles {
+ 			// _, err := fillArticle(&article, lawID, 0, l.DB, tx)
+-			err := index.Index("article."+strconv.Itoa(article.ID),
+-				prepareItem(int64(article.ID), article.Name, article.Name, "article", law.ID, law.Name))
++			err := index.Index("article."+strconv.Itoa(article.ID), article)
++			// prepareItem(int64(article.ID), article.Name, article.Name, "article", law.ID, law.Name))
+ 			if err != nil {
+ 				return nil
+ 			}
+diff --git a/indexer/mapping.go b/indexer/mapping.go
+index 7f61536..88e917c 100644
+--- a/indexer/mapping.go
++++ b/indexer/mapping.go
+@@ -5,15 +5,44 @@ import (
+ 	"github.com/blevesearch/bleve/mapping"
+ )
+ 
++//BuildIndexMapping sets the mapping for the index
+ func BuildIndexMapping() (mapping.IndexMapping, error) {
+ 	esFieldMapping := bleve.NewTextFieldMapping()
+ 	esFieldMapping.Analyzer = "es"
+ 
+-	eventMapping := bleve.NewDocumentMapping()
+-	eventMapping.AddFieldMappingsAt("Name", esFieldMapping)
+-	eventMapping.AddFieldMappingsAt("Content", esFieldMapping)
++	//default
++	documentMapping := bleve.NewDocumentMapping()
++	documentMapping.AddFieldMappingsAt("Name", esFieldMapping)
++	documentMapping.AddFieldMappingsAt("Content", esFieldMapping)
++
++	//law
++	lawMapping := bleve.NewDocumentMapping()
++	lawMapping.AddFieldMappingsAt("Name", esFieldMapping)
++
++	//article
++	articleMapping := bleve.NewDocumentMapping()
++	articleMapping.AddFieldMappingsAt("Name", esFieldMapping)
++	articleMapping.AddFieldMappingsAt("Content", esFieldMapping)
++
++	//book
++	bookMapping := bleve.NewDocumentMapping()
++	bookMapping.AddFieldMappingsAt("Name", esFieldMapping)
++
++	//title
++	titleMapping := bleve.NewDocumentMapping()
++	titleMapping.AddFieldMappingsAt("Name", esFieldMapping)
++
++	//chapter
++	chapterMapping := bleve.NewDocumentMapping()
++	chapterMapping.AddFieldMappingsAt("Name", esFieldMapping)
+ 
+ 	mapping := bleve.NewIndexMapping()
+-	mapping.DefaultMapping = eventMapping
++	mapping.DefaultMapping = documentMapping
++	mapping.AddDocumentMapping("law", lawMapping)
++	mapping.AddDocumentMapping("article", articleMapping)
++	mapping.AddDocumentMapping("book", bookMapping)
++	mapping.AddDocumentMapping("title", titleMapping)
++	mapping.AddDocumentMapping("chapter", chapterMapping)
++
+ 	return mapping, nil
+ }

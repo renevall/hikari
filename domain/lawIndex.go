@@ -6,7 +6,11 @@ type LawIndex struct {
 	ID           int64  `json:"id"`
 	Name         string `json:"name"`
 	Content      string `json:"content"`
-	ResourceType string `json:"type"`
+	DocumentType string `json:"type"`
 	LawID        int    `json:"law-id"`
 	LawName      string `json:"law-name"`
+}
+
+func (l *LawIndex) Type() string {
+	return l.DocumentType
 }

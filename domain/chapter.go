@@ -12,5 +12,5 @@ type Chapter struct {
 
 //Type returns the type of bleve document mapping
 func (c *Chapter) Type() string {
-	return "article"
+	return "chapter"
 }
