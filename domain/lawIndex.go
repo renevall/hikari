@@ -7,8 +7,8 @@ type LawIndex struct {
 	Name         string `json:"name"`
 	Content      string `json:"content"`
 	DocumentType string `json:"type"`
-	LawID        int    `json:"law-id"`
-	LawName      string `json:"law-name"`
+	LawID        int    `json:"law_id"`
+	LawName      string `json:"law_name"`
 }
 
 func (l *LawIndex) Type() string {

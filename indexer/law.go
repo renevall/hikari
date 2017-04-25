@@ -14,8 +14,15 @@ type LawIndex struct{}
 //Add adds a Law to the index
 func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
 
-	// Adding Relevant Info to Index
+	// Adding law to index
+	err := index.Index("Law."+strconv.Itoa(law.ID),
+		prepareItem(int64(law.ID), law.Name, law.Intro, law.Type(), law.ID, ""))
 
+	if err != nil {
+		return nil
+	}
+
+	// Adding Relevant Info to Index
 	if len(law.Books) > 0 {
 		for _, book := range law.Books {
 			// err := index.Index("book."+strconv.FormatInt(book.ID, 10), book)
@@ -109,6 +116,7 @@ func (li *LawIndex) Search(queryString string, index bleve.Index) (*bleve.Search
 	// query := bleve.NewPhraseQuery(strings.Split(queryString, " "), "Content")
 	query := bleve.NewMatchQuery(queryString)
 	search := bleve.NewSearchRequest(query)
+	search.Fields = append(search.Fields, "name", "content", "type", "law_name")
 	search.Highlight = bleve.NewHighlightWithStyle("html")
 	searchResults, err := index.Search(search)
 	if err != nil {
