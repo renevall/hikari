@@ -116,7 +116,7 @@ func (li *LawIndex) Search(queryString string, index bleve.Index) (*bleve.Search
 	// query := bleve.NewPhraseQuery(strings.Split(queryString, " "), "Content")
 	query := bleve.NewMatchQuery(queryString)
 	search := bleve.NewSearchRequest(query)
-	search.Fields = append(search.Fields, "name", "content", "type", "law_name")
+	search.Fields = append(search.Fields, "name", "content", "type", "law_name", "law_id")
 	search.Highlight = bleve.NewHighlightWithStyle("html")
 	searchResults, err := index.Search(search)
 	if err != nil {
