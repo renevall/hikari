@@ -13,6 +13,7 @@ type LawIndex struct{}
 
 //Add adds a Law to the index
 func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
+	// fmt.Println(law)
 
 	// Adding law to index
 	err := index.Index("Law."+strconv.Itoa(law.ID),
@@ -66,6 +67,7 @@ func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
 	} else if len(law.Titles) > 0 {
 		for _, title := range law.Titles {
 			// err := index.Index("title."+strconv.FormatInt(title.ID, 10), title)
+			fmt.Println(title)
 			err := index.Index("title."+strconv.FormatInt(title.ID, 10),
 				prepareItem(title.ID, title.Name, "", title.Type(), law.ID, law.Name))
 			if err != nil {
@@ -77,6 +79,7 @@ func (li *LawIndex) Add(law domain.Law, index bleve.Index) error {
 					err := index.Index("chapter."+strconv.FormatInt(chapter.ID, 10),
 						prepareItem(chapter.ID, chapter.Name, "", chapter.Type(), law.ID, law.Name))
 					if err != nil {
+						fmt.Println(err)
 						return err
 					}
 					if len(chapter.Articles) > 0 {

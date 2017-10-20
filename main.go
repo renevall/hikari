@@ -2,10 +2,10 @@ package main
 
 import (
 	"bitbucket.org/reneval/hikari/service"
-	_ "github.com/blevesearch/blevex/lang/es"
+	_ "github.com/blevesearch/bleve/analysis/lang/es"
 )
 
-//TODO: makes this file a cli
+//TODO: makes this file a clis
 
 func main() {
 	hs := service.HikariService{}

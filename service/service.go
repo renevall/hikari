@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -47,6 +48,12 @@ func (s *HikariService) Run() {
 			log.Fatal(err)
 		}
 		lawIndex, err = bleve.New("testlaws.bleve", indexMapping)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		fmt.Println(lawIndex.Name())
 	}
 
 	lawRouting := LawRouting{&lawIndexer, lawIndex}
